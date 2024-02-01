@@ -35,10 +35,7 @@ const useAccountStore = defineStore('accountStore', {
                     this.res_msg = res.data
                 })
         }
-    },
-    persist: {
-        storage: false
-    },
+    }
 })
 
 export default useAccountStore

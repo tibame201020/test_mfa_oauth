@@ -59,6 +59,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(
                 req -> {
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/testTop")).permitAll();
+                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/testSub")).permitAll();
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/login")).permitAll();
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publishApi")).permitAll();
                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publisher/role")).hasRole("publisher");

@@ -1,7 +1,45 @@
 <script setup lang="ts">
 import useAccountStore from './stores/account-store'
+import useCategoryStore from './stores/category-store'
+import type { CascaderProps } from 'element-plus'
 
-const accountStore = useAccountStore();
+const accountStore = useAccountStore()
+const categoryStore = useCategoryStore()
+
+
+const handleDataToNodes = (data: any[]) => {
+  return Array.from(data).map((item) => ({
+    value: `value - ${item}`,
+    label: `Label - ${item}`,
+    leaf: data.length == 2
+  }))
+}
+
+const props: CascaderProps = {
+  lazy: true,
+  lazyLoad(node, resolve) {
+    const { level } = node
+    if (level === 0) {
+      categoryStore.fetchTop().then(() => {
+        resolve(handleDataToNodes(categoryStore.top));
+      })
+      return
+    }
+    categoryStore.fetchSub(node.value).then(() => {
+      if (categoryStore.sub.length === 2) {
+        resolve(handleDataToNodes(categoryStore.sub));
+        return
+      }
+      resolve(handleDataToNodes(categoryStore.sub));
+    })
+  },
+}
+
+const handleCategoryChange = (value: any[]) => {
+  console.log('Selected Category:', value)
+  console.log('Selected last:', value[value.length - 1])
+}
+
 
 const clearLogin = () => {
   accountStore.$reset()
@@ -32,6 +70,27 @@ broadcastChannel.onmessage = (event) => {
 
 <template>
   <div class="container">
+    <div class="row">
+      <div class="col">
+        <hr>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <el-cascader 
+        :props="props" 
+        filterable 
+        clearable 
+        @change="handleCategoryChange" 
+        style="width:30rem;" />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <hr>
+      </div>
+    </div>
 
     <div class="row">
       <div class="col" v-if="accountStore.user_info">

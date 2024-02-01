@@ -1,0 +1,362 @@
+[1mdiff --git a/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/config/SecurityConfig.java b/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/config/SecurityConfig.java[m
+[1mindex b37e8de..7c94ebc 100644[m
+[1m--- a/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/config/SecurityConfig.java[m
+[1m+++ b/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/config/SecurityConfig.java[m
+[36m@@ -59,6 +59,8 @@[m [mpublic class SecurityConfig {[m
+ [m
+         http.authorizeHttpRequests([m
+                 req -> {[m
+[32m+[m[32m                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/testTop")).permitAll();[m
+[32m+[m[32m                    req.requestMatchers(new MvcRequestMatcher(introspector, "/api/testSub")).permitAll();[m
+                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/login")).permitAll();[m
+                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publishApi")).permitAll();[m
+                     req.requestMatchers(new MvcRequestMatcher(introspector, "/api/publisher/role")).hasRole("publisher");[m
+[1mdiff --git a/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/controller/RestApi.java b/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/controller/RestApi.java[m
+[1mindex 49c64d3..04f7791 100644[m
+[1m--- a/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/controller/RestApi.java[m
+[1m+++ b/test_mfa_oauth_auth_client/src/main/java/com/example/test_mfa_oauth_auth_client/controller/RestApi.java[m
+[36m@@ -1,11 +1,15 @@[m
+ package com.example.test_mfa_oauth_auth_client.controller;[m
+ [m
+[32m+[m[32mimport ch.qos.logback.core.testUtil.RandomUtil;[m
+ import com.example.test_mfa_oauth_auth_client.utils.SecurityContextHandler;[m
+ import org.apache.commons.logging.Log;[m
+ import org.apache.commons.logging.LogFactory;[m
+ import org.springframework.web.bind.annotation.RequestMapping;[m
+ import org.springframework.web.bind.annotation.RestController;[m
+ [m
+[32m+[m[32mimport java.util.List;[m
+[32m+[m[32mimport java.util.Random;[m
+[32m+[m
+ @RestController[m
+ @RequestMapping("/api")[m
+ public class RestApi {[m
+[36m@@ -46,4 +50,19 @@[m [mpublic class RestApi {[m
+         log.info("get user = " + SecurityContextHandler.getUserInfo());[m
+         return "needWriterRole or needPublisherRole";[m
+     }[m
+[32m+[m[32m    @RequestMapping("/testTop")[m
+[32m+[m[32m    public List<String> testTop() {[m
+[32m+[m[32m        return List.of("top1", "top2", "top3");[m
+[32m+[m[32m    }[m
+[32m+[m[32m    @RequestMapping("/testSub")[m
+[32m+[m[32m    public List<String> testSub() {[m
+[32m+[m[32m        int positiveInt = RandomUtil.getPositiveInt();[m
+[32m+[m[32m        System.err.println(positiveInt);[m
+[32m+[m[32m        boolean flag = positiveInt%2 == 0;[m
+[32m+[m[32m        System.err.println(flag);[m
+[32m+[m[32m        if (flag) {[m
+[32m+[m[32m            return List.of("sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3", "sub1", "sub2", "sub3");[m
+[32m+[m[32m        }[m
+[32m+[m[32m        return List.of("end1", "end2");[m
+[32m+[m[32m    }[m
+ }[m
+[1mdiff --git a/vite-project/package-lock.json b/vite-project/package-lock.json[m
+[1mindex 3970d08..8f1c727 100644[m
+[1m--- a/vite-project/package-lock.json[m
+[1m+++ b/vite-project/package-lock.json[m
+[36m@@ -10,6 +10,7 @@[m
+       "dependencies": {[m
+         "axios": "^1.6.1",[m
+         "bootstrap": "^5.3.2",[m
+[32m+[m[32m        "element-plus": "^2.5.3",[m
+         "idb-keyval": "^6.2.1",[m
+         "pinia": "^2.1.7",[m
+         "pinia-plugin-persistedstate": "^3.2.0",[m
+[36m@@ -34,6 +35,22 @@[m
+         "node": ">=6.0.0"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/@ctrl/tinycolor": {[m
+[32m+[m[32m      "version": "3.6.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==",[m
+[32m+[m[32m      "engines": {[m
+[32m+[m[32m        "node": ">=10"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@element-plus/icons-vue": {[m
+[32m+[m[32m      "version": "2.3.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@element-plus/icons-vue/-/icons-vue-2.3.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg==",[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "vue": "^3.2.0"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "node_modules/@esbuild/android-arm": {[m
+       "version": "0.18.20",[m
+       "resolved": "https://registry.npmjs.org/@esbuild/android-arm/-/android-arm-0.18.20.tgz",[m
+[36m@@ -386,6 +403,28 @@[m
+         "node": ">=12"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/@floating-ui/core": {[m
+[32m+[m[32m      "version": "1.6.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@floating-ui/core/-/core-1.6.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-PcF++MykgmTj3CIyOQbKA/hDzOAiqI3mhuoN44WRCopIs1sgoDoU4oty4Jtqaj/y3oDU6fnVSm4QG0a3t5i0+g==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "@floating-ui/utils": "^0.2.1"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@floating-ui/dom": {[m
+[32m+[m[32m      "version": "1.6.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@floating-ui/dom/-/dom-1.6.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-iA8qE43/H5iGozC3W0YSnVSW42Vh522yyM1gj+BqRwVsTNOyr231PsXDaV04yT39PsO0QL2QpbI/M0ZaLUQgRQ==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "@floating-ui/core": "^1.6.0",[m
+[32m+[m[32m        "@floating-ui/utils": "^0.2.1"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@floating-ui/utils": {[m
+[32m+[m[32m      "version": "0.2.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q=="[m
+[32m+[m[32m    },[m
+     "node_modules/@jridgewell/sourcemap-codec": {[m
+       "version": "1.4.15",[m
+       "resolved": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz",[m
+[36m@@ -395,12 +434,29 @@[m
+       "version": "2.11.8",[m
+       "resolved": "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz",[m
+       "integrity": "sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==",[m
+[31m-      "peer": true,[m
+       "funding": {[m
+         "type": "opencollective",[m
+         "url": "https://opencollective.com/popperjs"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/@types/lodash": {[m
+[32m+[m[32m      "version": "4.14.202",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.202.tgz",[m
+[32m+[m[32m      "integrity": "sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ=="[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@types/lodash-es": {[m
+[32m+[m[32m      "version": "4.17.12",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@types/lodash-es/-/lodash-es-4.17.12.tgz",[m
+[32m+[m[32m      "integrity": "sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "@types/lodash": "*"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@types/web-bluetooth": {[m
+[32m+[m[32m      "version": "0.0.16",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@types/web-bluetooth/-/web-bluetooth-0.0.16.tgz",[m
+[32m+[m[32m      "integrity": "sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ=="[m
+[32m+[m[32m    },[m
+     "node_modules/@vitejs/plugin-vue": {[m
+       "version": "4.4.1",[m
+       "resolved": "https://registry.npmjs.org/@vitejs/plugin-vue/-/plugin-vue-4.4.1.tgz",[m
+[36m@@ -573,6 +629,94 @@[m
+       "resolved": "https://registry.npmjs.org/@vue/shared/-/shared-3.3.8.tgz",[m
+       "integrity": "sha512-8PGwybFwM4x8pcfgqEQFy70NaQxASvOC5DJwLQfpArw1UDfUXrJkdxD3BhVTMS+0Lef/TU7YO0Jvr0jJY8T+mw=="[m
+     },[m
+[32m+[m[32m    "node_modules/@vueuse/core": {[m
+[32m+[m[32m      "version": "9.13.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@vueuse/core/-/core-9.13.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-pujnclbeHWxxPRqXWmdkKV5OX4Wk4YeK7wusHqRwU0Q7EFusHoqNA/aPhB6KCh9hEqJkLAJo7bb0Lh9b+OIVzw==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "@types/web-bluetooth": "^0.0.16",[m
+[32m+[m[32m        "@vueuse/metadata": "9.13.0",[m
+[32m+[m[32m        "@vueuse/shared": "9.13.0",[m
+[32m+[m[32m        "vue-demi": "*"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "funding": {[m
+[32m+[m[32m        "url": "https://github.com/sponsors/antfu"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@vueuse/core/node_modules/vue-demi": {[m
+[32m+[m[32m      "version": "0.14.7",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.7.tgz",[m
+[32m+[m[32m      "integrity": "sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==",[m
+[32m+[m[32m      "hasInstallScript": true,[m
+[32m+[m[32m      "bin": {[m
+[32m+[m[32m        "vue-demi-fix": "bin/vue-demi-fix.js",[m
+[32m+[m[32m        "vue-demi-switch": "bin/vue-demi-switch.js"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "engines": {[m
+[32m+[m[32m        "node": ">=12"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "funding": {[m
+[32m+[m[32m        "url": "https://github.com/sponsors/antfu"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "@vue/composition-api": "^1.0.0-rc.1",[m
+[32m+[m[32m        "vue": "^3.0.0-0 || ^2.6.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "peerDependenciesMeta": {[m
+[32m+[m[32m        "@vue/composition-api": {[m
+[32m+[m[32m          "optional": true[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@vueuse/metadata": {[m
+[32m+[m[32m      "version": "9.13.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@vueuse/metadata/-/metadata-9.13.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-gdU7TKNAUVlXXLbaF+ZCfte8BjRJQWPCa2J55+7/h+yDtzw3vOoGQDRXzI6pyKyo6bXFT5/QoPE4hAknExjRLQ==",[m
+[32m+[m[32m      "funding": {[m
+[32m+[m[32m        "url": "https://github.com/sponsors/antfu"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@vueuse/shared": {[m
+[32m+[m[32m      "version": "9.13.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@vueuse/shared/-/shared-9.13.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "vue-demi": "*"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "funding": {[m
+[32m+[m[32m        "url": "https://github.com/sponsors/antfu"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/@vueuse/shared/node_modules/vue-demi": {[m
+[32m+[m[32m      "version": "0.14.7",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.7.tgz",[m
+[32m+[m[32m      "integrity": "sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==",[m
+[32m+[m[32m      "hasInstallScript": true,[m
+[32m+[m[32m      "bin": {[m
+[32m+[m[32m        "vue-demi-fix": "bin/vue-demi-fix.js",[m
+[32m+[m[32m        "vue-demi-switch": "bin/vue-demi-switch.js"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "engines": {[m
+[32m+[m[32m        "node": ">=12"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "funding": {[m
+[32m+[m[32m        "url": "https://github.com/sponsors/antfu"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "@vue/composition-api": "^1.0.0-rc.1",[m
+[32m+[m[32m        "vue": "^3.0.0-0 || ^2.6.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "peerDependenciesMeta": {[m
+[32m+[m[32m        "@vue/composition-api": {[m
+[32m+[m[32m          "optional": true[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/async-validator": {[m
+[32m+[m[32m      "version": "4.2.5",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/async-validator/-/async-validator-4.2.5.tgz",[m
+[32m+[m[32m      "integrity": "sha512-7HhHjtERjqlNbZtqNqy2rckN/SpOOlmDliet+lP7k+eKZEjPk3DgyeU9lIXLdeLz0uBbbVp+9Qdow9wJWgwwfg=="[m
+[32m+[m[32m    },[m
+     "node_modules/asynckit": {[m
+       "version": "0.4.0",[m
+       "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",[m
+[36m@@ -643,6 +787,11 @@[m
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.1.2.tgz",[m
+       "integrity": "sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ=="[m
+     },[m
+[32m+[m[32m    "node_modules/dayjs": {[m
+[32m+[m[32m      "version": "1.11.10",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.10.tgz",[m
+[32m+[m[32m      "integrity": "sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ=="[m
+[32m+[m[32m    },[m
+     "node_modules/de-indent": {[m
+       "version": "1.0.2",[m
+       "resolved": "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz",[m
+[36m@@ -657,6 +806,31 @@[m
+         "node": ">=0.4.0"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/element-plus": {[m
+[32m+[m[32m      "version": "2.5.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/element-plus/-/element-plus-2.5.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-wmtstxaMkD6UinIgD+45CjrhbRh4u0vt+/GgxfPeMLt5pDpIVwZFjkUaVcWqqxcxd5a80HP3XlDF74fW7wim9A==",[m
+[32m+[m[32m      "dependencies": {[m
+[32m+[m[32m        "@ctrl/tinycolor": "^3.4.1",[m
+[32m+[m[32m        "@element-plus/icons-vue": "^2.3.1",[m
+[32m+[m[32m        "@floating-ui/dom": "^1.0.1",[m
+[32m+[m[32m        "@popperjs/core": "npm:@sxzz/popperjs-es@^2.11.7",[m
+[32m+[m[32m        "@types/lodash": "^4.14.182",[m
+[32m+[m[32m        "@types/lodash-es": "^4.17.6",[m
+[32m+[m[32m        "@vueuse/core": "^9.1.0",[m
+[32m+[m[32m        "async-validator": "^4.2.5",[m
+[32m+[m[32m        "dayjs": "^1.11.3",[m
+[32m+[m[32m        "escape-html": "^1.0.3",[m
+[32m+[m[32m        "lodash": "^4.17.21",[m
+[32m+[m[32m        "lodash-es": "^4.17.21",[m
+[32m+[m[32m        "lodash-unified": "^1.0.2",[m
+[32m+[m[32m        "memoize-one": "^6.0.0",[m
+[32m+[m[32m        "normalize-wheel-es": "^1.2.0"[m
+[32m+[m[32m      },[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "vue": "^3.2.0"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "node_modules/esbuild": {[m
+       "version": "0.18.20",[m
+       "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.18.20.tgz",[m
+[36m@@ -694,6 +868,11 @@[m
+         "@esbuild/win32-x64": "0.18.20"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/escape-html": {[m
+[32m+[m[32m      "version": "1.0.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="[m
+[32m+[m[32m    },[m
+     "node_modules/estree-walker": {[m
+       "version": "2.0.2",[m
+       "resolved": "https://registry.npmjs.org/estree-walker/-/estree-walker-2.0.2.tgz",[m
+[36m@@ -759,6 +938,26 @@[m
+       "resolved": "https://registry.npmjs.org/idb-keyval/-/idb-keyval-6.2.1.tgz",[m
+       "integrity": "sha512-8Sb3veuYCyrZL+VBt9LJfZjLUPWVvqn8tG28VqYNFCo43KHcKuq+b4EiXGeuaLAQWL2YmyDgMp2aSpH9JHsEQg=="[m
+     },[m
+[32m+[m[32m    "node_modules/lodash": {[m
+[32m+[m[32m      "version": "4.17.21",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz",[m
+[32m+[m[32m      "integrity": "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/lodash-es": {[m
+[32m+[m[32m      "version": "4.17.21",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz",[m
+[32m+[m[32m      "integrity": "sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw=="[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "node_modules/lodash-unified": {[m
+[32m+[m[32m      "version": "1.0.3",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/lodash-unified/-/lodash-unified-1.0.3.tgz",[m
+[32m+[m[32m      "integrity": "sha512-WK9qSozxXOD7ZJQlpSqOT+om2ZfcT4yO+03FuzAHD0wF6S0l0090LRPDx3vhTTLZ8cFKpBn+IOcVXK6qOcIlfQ==",[m
+[32m+[m[32m      "peerDependencies": {[m
+[32m+[m[32m        "@types/lodash-es": "*",[m
+[32m+[m[32m        "lodash": "*",[m
+[32m+[m[32m        "lodash-es": "*"[m
+[32m+[m[32m      }[m
+[32m+[m[32m    },[m
+     "node_modules/lru-cache": {[m
+       "version": "6.0.0",[m
+       "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",[m
+[36m@@ -782,6 +981,11 @@[m
+         "node": ">=12"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/memoize-one": {[m
+[32m+[m[32m      "version": "6.0.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/memoize-one/-/memoize-one-6.0.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw=="[m
+[32m+[m[32m    },[m
+     "node_modules/mime-db": {[m
+       "version": "1.52.0",[m
+       "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",[m
+[36m@@ -839,6 +1043,11 @@[m
+         "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"[m
+       }[m
+     },[m
+[32m+[m[32m    "node_modules/normalize-wheel-es": {[m
+[32m+[m[32m      "version": "1.2.0",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/normalize-wheel-es/-/normalize-wheel-es-1.2.0.tgz",[m
+[32m+[m[32m      "integrity": "sha512-Wj7+EJQ8mSuXr2iWfnujrimU35R2W4FAErEyTmJoJ7ucwTn2hOUSsRehMb5RSYkxXGTM7Y9QpvPmp++w5ftoJw=="[m
+[32m+[m[32m    },[m
+     "node_modules/path-browserify": {[m
+       "version": "1.0.1",[m
+       "resolved": "https://registry.npmjs.org/path-browserify/-/path-browserify-1.0.1.tgz",[m
+[36m@@ -1121,6 +1330,17 @@[m
+       "resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.23.3.tgz",[m
+       "integrity": "sha512-uVsWNvlVsIninV2prNz/3lHCb+5CJ+e+IUBfbjToAHODtfGYLfCFuY4AU7TskI+dAKk+njsPiBjq1gKTvZOBaw=="[m
+     },[m
+[32m+[m[32m    "@ctrl/tinycolor": {[m
+[32m+[m[32m      "version": "3.6.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz",[m
+[32m+[m[32m      "integrity": "sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA=="[m
+[32m+[m[32m    },[m
+[32m+[m[32m    "@element-plus/icons-vue": {[m
+[32m+[m[32m      "version": "2.3.1",[m
+[32m+[m[32m      "resolved": "https://registry.npmjs.org
